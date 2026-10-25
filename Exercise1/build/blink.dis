@@ -553,7 +553,7 @@ Disassembly of section .text:
 10000484:	4013      	ands	r3, r2
 10000486:	465a      	mov	r2, fp
 10000488:	6013      	str	r3, [r2, #0]
-1000048a:	200a      	movs	r0, #10
+1000048a:	2005      	movs	r0, #5
 1000048c:	f000 fde6 	bl	1000105c <sleep_ms>
 10000490:	464b      	mov	r3, r9
 10000492:	2280      	movs	r2, #128	@ 0x80
@@ -699,7 +699,7 @@ Disassembly of section .text:
 100005aa:	401a      	ands	r2, r3
 100005ac:	465b      	mov	r3, fp
 100005ae:	601a      	str	r2, [r3, #0]
-100005b0:	200a      	movs	r0, #10
+100005b0:	2005      	movs	r0, #5
 100005b2:	f000 fd53 	bl	1000105c <sleep_ms>
 100005b6:	464b      	mov	r3, r9
 100005b8:	2280      	movs	r2, #128	@ 0x80
