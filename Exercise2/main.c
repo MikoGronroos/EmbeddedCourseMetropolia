@@ -8,12 +8,11 @@
 
 static bool ledState = false;
 static int channel_level = TOP;
-static bool pressed = false;
-
 //static uint channel_addon[2] = {4, -4};
 static uint leds[3] = {20,21,22};
 static uint slices[3] = {0,0,0};
 static uint channels[3] = {0,0,0};
+static uint debounce = 0;
 
 static queue_t events;
 
@@ -29,10 +28,7 @@ int modifyBrightness(uint pin, uint addon, int value){
    }
    return value;
 }
-bool debounce_timer_callback(__unused struct repeating_timer *t) {
-   pressed = false;
-   return true;
-}
+
 void init_led(const uint pin){
    gpio_init(pin);
    gpio_set_dir(pin, GPIO_OUT);
@@ -49,10 +45,16 @@ void init_pwm(const uint slice_num, const uint channel){
    pwm_set_enabled(slice_num, true);
 }
 
+bool debounce_timer_callback(__unused struct repeating_timer *t) {
+   debounce++;
+   return true;
+}
+
 void toggle_irq(uint gpio, uint32_t event_mask){
-   if(pressed == false){
+   if(debounce >= 220){
       int val = 1;
       queue_try_add(&events, &val);
+      debounce = 0;
    }
 }
 
@@ -86,7 +88,7 @@ int main(){
    gpio_set_irq_enabled_with_callback(12, GPIO_IRQ_EDGE_FALL, true, toggle_irq);
 
    struct repeating_timer timer;
-   add_repeating_timer_ms(220, debounce_timer_callback, NULL, &timer);
+   add_repeating_timer_ms(1, debounce_timer_callback, NULL, &timer);
 
    for(int i = 0; i < 3; i++){
       init_led(leds[i]);
