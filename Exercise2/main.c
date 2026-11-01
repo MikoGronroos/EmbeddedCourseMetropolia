@@ -8,7 +8,6 @@
 
 static bool ledState = false;
 static int channel_level = TOP;
-//static uint channel_addon[2] = {4, -4};
 static uint leds[3] = {20,21,22};
 static uint slices[3] = {0,0,0};
 static uint channels[3] = {0,0,0};
@@ -16,16 +15,14 @@ static uint debounce = 0;
 
 static queue_t events;
 
-int modifyBrightness(uint pin, uint addon, int value){
-   if(gpio_get(pin) == 0){
-      value += addon;
-      if(value > TOP){
-         value = TOP;
-      }
-      if(value < 0){
-         value = 0;
-      }    
+int modifyBrightness(uint addon, int value){
+   value += addon;
+   if(value > TOP){
+      value = TOP;
    }
+   if(value < 0){
+      value = 0;
+   }   
    return value;
 }
 
@@ -50,16 +47,37 @@ bool debounce_timer_callback(__unused struct repeating_timer *t) {
    return true;
 }
 
-void toggle_irq(uint gpio, uint32_t event_mask){
-   if(debounce >= 220){
-      int val = 1;
+void interrupt(uint gpio, uint32_t event_mask){
+   if(gpio == 12){
+      if(debounce >= 220){
+         int val = 1;
+         queue_try_add(&events, &val);
+         debounce = 0;
+      }
+   }
+   if(gpio == 10){
+      int val = 0;
+      if(gpio_get(11) == 0){
+         val = 3;
+      }else if(gpio_get(11) == 1){
+         val = 2;
+      }
       queue_try_add(&events, &val);
-      debounce = 0;
+   }
+}
+
+void moved(int value){
+   if(ledState){
+      for(int i = 0; i < 2; i++){
+         channel_level = modifyBrightness(value, channel_level);
+      }
+      for(int i = 0; i < 3; i++){
+         pwm_set_chan_level(slices[i], channels[i], channel_level);
+      }
    }
 }
 
 void toggle(){
-   printf("xd\n");
    ledState = !ledState;
    if(ledState == false && channel_level == 0){
       ledState = true;
@@ -71,13 +89,13 @@ void toggle(){
 }
 
 int main(){
-
    uint rot_a = 10;
    uint rot_b = 11;
    uint rot_sw = 12;
 
    gpio_init(rot_a);
    gpio_set_dir(rot_a, GPIO_IN);
+   gpio_set_irq_enabled_with_callback(rot_a, GPIO_IRQ_EDGE_RISE, true, &interrupt);
 
    gpio_init(rot_b);
    gpio_set_dir(rot_b, GPIO_IN);
@@ -85,8 +103,9 @@ int main(){
    gpio_init(rot_sw);
    gpio_set_dir(rot_sw, GPIO_IN);
    gpio_pull_up(rot_sw);
-   gpio_set_irq_enabled_with_callback(12, GPIO_IRQ_EDGE_FALL, true, toggle_irq);
+   gpio_set_irq_enabled_with_callback(rot_sw, GPIO_IRQ_EDGE_FALL, true, &interrupt);
 
+   toggle();
    struct repeating_timer timer;
    add_repeating_timer_ms(1, debounce_timer_callback, NULL, &timer);
 
@@ -99,28 +118,25 @@ int main(){
 
    stdio_init_all();
    
-   queue_init(&events, sizeof(int), 10);
+   queue_init(&events, sizeof(int), 8);
    int value = 0;
    while(true){
       
-      while(queue_try_remove(&events, &value)){
+      while(queue_try_remove(&events, &value) == true){
          switch(value){
             case 1:
                toggle();
                break;
+            case 2:
+               moved(-10);
+               break;
+            case 3:
+               moved(10);
+               break;
          }
       }
-     /* 
-      if(ledState){
-         for(int i = 0; i < 2; i++){
-            channel_level = modifyBrightness(btn[i], channel_addon[i], channel_level);
-         }
-         for(int i = 0; i < 3; i++){
-            pwm_set_chan_level(slices[i], channels[i], channel_level);
-         }
-      }
-*/
    }
+   queue_free(&events);
    return 0;
 }
 
