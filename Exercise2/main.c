@@ -105,7 +105,6 @@ int main(){
    gpio_pull_up(rot_sw);
    gpio_set_irq_enabled_with_callback(rot_sw, GPIO_IRQ_EDGE_FALL, true, &interrupt);
 
-   toggle();
    struct repeating_timer timer;
    add_repeating_timer_ms(1, debounce_timer_callback, NULL, &timer);
 
