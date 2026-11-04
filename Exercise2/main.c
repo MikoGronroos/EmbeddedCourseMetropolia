@@ -12,6 +12,9 @@ static uint leds[3] = {20,21,22};
 static uint slices[3] = {0,0,0};
 static uint channels[3] = {0,0,0};
 static uint debounce = 0;
+static uint rot_a = 10;
+static uint rot_b = 11;
+static uint rot_sw = 12;
 
 static queue_t events;
 
@@ -48,18 +51,18 @@ bool debounce_timer_callback(__unused struct repeating_timer *t) {
 }
 
 void interrupt(uint gpio, uint32_t event_mask){
-   if(gpio == 12){
+   if(gpio == rot_sw){
       if(debounce >= 220){
          int val = 1;
          queue_try_add(&events, &val);
          debounce = 0;
       }
    }
-   if(gpio == 10){
+   if(gpio == rot_a){
       int val = 0;
-      if(gpio_get(11) == 0){
+      if(gpio_get(rot_b) == 0){
          val = 3;
-      }else if(gpio_get(11) == 1){
+      }else if(gpio_get(rot_a) == 1){
          val = 2;
       }
       queue_try_add(&events, &val);
@@ -89,9 +92,6 @@ void toggle(){
 }
 
 int main(){
-   uint rot_a = 10;
-   uint rot_b = 11;
-   uint rot_sw = 12;
 
    gpio_init(rot_a);
    gpio_set_dir(rot_a, GPIO_IN);

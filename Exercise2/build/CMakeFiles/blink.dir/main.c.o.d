@@ -76,4 +76,18 @@ CMakeFiles/blink.dir/main.c.o: \
  /home/ihmeihminen/pico/pico-sdk/src/common/pico_util/include/pico/util/queue.h \
  /home/ihmeihminen/pico/pico-sdk/src/rp2_common/hardware_sync/include/hardware/sync.h \
  /home/ihmeihminen/pico/pico-sdk/src/rp2_common/hardware_sync_spin_lock/include/hardware/sync/spin_lock.h \
- /home/ihmeihminen/pico/pico-sdk/src/common/pico_sync/include/pico/lock_core.h
+ /home/ihmeihminen/pico/pico-sdk/src/common/pico_sync/include/pico/lock_core.h \
+ /usr/arm-none-eabi/include/time.h \
+ /usr/arm-none-eabi/include/machine/time.h \
+ /usr/arm-none-eabi/include/sys/types.h \
+ /usr/arm-none-eabi/include/machine/endian.h \
+ /usr/arm-none-eabi/include/machine/_endian.h \
+ /usr/arm-none-eabi/include/sys/select.h \
+ /usr/arm-none-eabi/include/sys/_sigset.h \
+ /usr/arm-none-eabi/include/sys/_timeval.h \
+ /usr/arm-none-eabi/include/sys/timespec.h \
+ /usr/arm-none-eabi/include/sys/_timespec.h \
+ /usr/arm-none-eabi/include/sys/_pthreadtypes.h \
+ /usr/arm-none-eabi/include/sys/sched.h \
+ /usr/arm-none-eabi/include/machine/types.h \
+ /usr/arm-none-eabi/include/sys/_locale.h

@@ -396,7 +396,7 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=4
 //Minor version of cmake used to create the current loaded cache
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=4
 //Patch version of cmake used to create the current loaded cache
-CMAKE_CACHE_PATCH_VERSION:INTERNAL=4
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=5
 //ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
 CMAKE_COLOR_MAKEFILE-ADVANCED:INTERNAL=1
 //Path to CMake executable.
@@ -545,7 +545,7 @@ DOXYGEN_DOT_EXECUTABLE-ADVANCED:INTERNAL=1
 DOXYGEN_EXECUTABLE-ADVANCED:INTERNAL=1
 FAMILY_MCUS:INTERNAL=RP2040
 //Details about finding Python3
-FIND_PACKAGE_MESSAGE_DETAILS_Python3:INTERNAL=[/usr/sbin/python3.14][found components: Interpreter ][v3.14.8()]
+FIND_PACKAGE_MESSAGE_DETAILS_Python3:INTERNAL=[/usr/sbin/python3.14][found components: Interpreter ][v3.14.9()]
 PICO_32BIT:INTERNAL=1
 PICO_ARM:INTERNAL=1
 PICO_BOOT_STAGE2_DIR:INTERNAL=/home/ihmeihminen/pico/pico-sdk/src/rp2040/boot_stage2
@@ -582,7 +582,7 @@ _Python3_Development_REASON_FAILURE:INTERNAL=
 //Path to a program.
 _Python3_EXECUTABLE:INTERNAL=/usr/sbin/python3.14
 //Python3 Properties
-_Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;14;8;ARM;ARM64;32;64;<none>;;abi3;/usr/lib/python3.14;/usr/lib/python3.14;/usr/lib/python3.14/site-packages;/usr/lib/python3.14/site-packages
+_Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;14;9;ARM;ARM64;32;64;<none>;;abi3;/usr/lib/python3.14;/usr/lib/python3.14;/usr/lib/python3.14/site-packages;/usr/lib/python3.14/site-packages
 _Python3_INTERPRETER_SIGNATURE:INTERNAL=79d9396b68bbbaaaad3921f6cb88819c
 //NumPy reason failure
 _Python3_NumPy_REASON_FAILURE:INTERNAL=
