@@ -4,11 +4,7 @@
 #include <time.h>
 #include <string.h>
 
-#define MAX_STEPS 4096
-#define BAUD_RATE 9600      
-#define UART_TX_PIN 4        
-#define UART_RX_PIN 5        
-#define STRLEN 128
+#define MAX_STEPS 4096     
    
 uint pinOpto = 28;
 uint pinA = 2;
@@ -98,26 +94,30 @@ int main(){
    gpio_set_dir(pinC, GPIO_OUT);
    gpio_set_dir(pinD, GPIO_OUT);
     
-   char buffer[STRLEN];
-
+   char buffer[64];
+   int pos = 0;   
    while(true){
-      printf("-> ");
-      fgets(buffer, sizeof(buffer), stdin);
-      buffer[strcspn(buffer, "\n")] = '\0';
-      if (strlen(buffer) == 0) {
-         continue;
-      }
+      int c = getchar();
+      if (c != EOF) {
+        if (c == '\r' || c == '\n') {
+            buffer[pos] = '\0';
+            printf("received %s\n", buffer);
+            pos = 0;
+            if(strcmp(buffer, "status") == 0){
 
-      if(strcmp(buffer, "status") == 0){
-
+            }
+            if(strcmp(buffer, "calibrate") == 0){
+               calibrate();
+            }
+            if(strcmp(buffer, "run") == 0){
+               run(5);
+            }
+        } else {
+            if (pos < 64 - 1) {
+                buffer[pos++] = c;
+            }
+         }
       }
-      if(strcmp(buffer, "calibrate") == 0){
-         calibrate();
-      }
-      if(strcmp(buffer, "run") == 0){
-         run(5);
-      }
-
    }
    return 1;
 }
