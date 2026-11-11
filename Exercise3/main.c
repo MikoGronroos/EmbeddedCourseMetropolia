@@ -12,6 +12,7 @@ uint pinB = 3;
 uint pinC = 6;
 uint pinD = 13;
 uint numberOfSteps = 0;
+bool calibrated = false;
 
 int turnRight(){
    gpio_put(pinA, true);
@@ -104,7 +105,13 @@ int main(){
             printf("received %s\n", buffer);
             pos = 0;
             if(strcmp(buffer, "status") == 0){
-
+               printf("The motor is calibrated: %s\n", calibrated ? "true" : "false");
+               printf("Number of steps per revolution: ");
+               if(calibrated == true){
+                  printf("%d\n", 1);   
+               }else{
+                  printf("Not available\n");
+               }
             }
             if(strcmp(buffer, "calibrate") == 0){
                calibrate();
