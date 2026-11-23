@@ -29,6 +29,26 @@ void uart_flush(uart_inst_t *uart){
    }
 }
 
+int uart_read_line_timeout(uart_inst_t *uart, char *buffer, size_t max_len, uint32_t timeout) {
+   size_t idx = 0;
+   absolute_time_t deadline = make_timeout_time_us(timeout);
+
+   while (!time_reached(deadline)) {
+      if (uart_is_readable(uart)) {
+         char c = uart_getc(uart);
+         if (idx < max_len - 1) {
+            buffer[idx++] = c;
+         }
+         if (c == '\n') {
+            buffer[idx] = '\0';
+            return (int)idx;
+         }
+      }
+   }
+   buffer[idx] = '\0';
+   return -1;
+}
+
 int main(){
    stdio_init_all();
 
@@ -40,7 +60,7 @@ int main(){
    gpio_pull_up(SW_0_PIN);   
 
    appstate state = STATE_WAIT;
-   char rx_buffer[BUFFER_SIZE];
+   char buffer[BUFFER_SIZE];
 
    while(true){
       switch(state){
@@ -56,9 +76,28 @@ int main(){
             }
             break;
          case STATE_CHECK_CONNECTION:
-            printf("Hei\n");
+            bool connected = false;
+
+            for (int attempt = 0; attempt < 5; attempt++) {
+               uart_flush(UART_ID);
+               uart_puts(UART_ID, "AT\r\n");
+
+               int len = uart_read_line_timeout(UART_ID, buffer, BUFFER_SIZE, TIMEOUT);
+               if (len > 0 && strstr(buffer, "+AT: OK") != NULL) {
+                  connected = true;
+                  break;
+               }
+            }
+            if (connected) {
+               printf("Connected to LoRa module\n");
+               state = STATE_READ_VERSION;
+            } else {
+               printf("module not responding\n");
+               state = STATE_WAIT;
+            }
             break;
          case STATE_READ_VERSION:
+            printf("hei\n");
             break;
          case STATE_READ_DEVUI:
             break;
