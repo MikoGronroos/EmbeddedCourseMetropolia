@@ -16,3 +16,10 @@
 #define TIMEOUT 500000
 #define BUFFER_SIZE 128
 
+typedef enum {
+   STATE_WAIT = 1,
+   STATE_CHECK_CONNECTION = 2,
+   STATE_READ_VERSION = 3,
+   STATE_READ_DEVUI = 4
+} state;
+
