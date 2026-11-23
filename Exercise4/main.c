@@ -20,7 +20,7 @@ typedef enum {
    STATE_WAIT = 1,
    STATE_CHECK_CONNECTION = 2,
    STATE_READ_VERSION = 3,
-   STATE_READ_DEVUI = 4
+   STATE_READ_DEVEUI = 4
 } appstate;
 
 void uart_flush(uart_inst_t *uart){
@@ -115,10 +115,10 @@ int main(){
                state = STATE_READ_DEVEUI;
             } else {
                printf("Module stopped responding\n");
-               state = STATE_WAIT_BUTTON;
+               state = STATE_WAIT;
             }
             break;
-         case STATE_READ_DEVUI:
+         case STATE_READ_DEVEUI:
             printf("Hei\n");
             break;
       }
