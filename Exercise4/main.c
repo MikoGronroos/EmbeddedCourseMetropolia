@@ -106,9 +106,20 @@ int main(){
             }
             break;
          case STATE_READ_VERSION:
-            printf("hei\n");
+            uart_flush(UART_ID);
+            uart_puts(UART_ID, "AT+VER\r\n");
+            int len = uart_read_line_timeout(UART_ID, buffer, BUFFER_SIZE, TIMEOUT);
+            if (len > 0 && strstr(buffer, "+VER:") != NULL) {
+               buffer[strcspn(buffer, "\r\n")] = '\0';
+               printf("Firmware version: %s\n", buffer);
+               state = STATE_READ_DEVEUI;
+            } else {
+               printf("Module stopped responding\n");
+               state = STATE_WAIT_BUTTON;
+            }
             break;
          case STATE_READ_DEVUI:
+            printf("Hei\n");
             break;
       }
    }   
