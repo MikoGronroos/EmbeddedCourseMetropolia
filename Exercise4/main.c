@@ -58,6 +58,10 @@ int main(){
          case STATE_CHECK_CONNECTION:
             printf("Hei\n");
             break;
+         case STATE_READ_VERSION:
+            break;
+         case STATE_READ_DEVUI:
+            break;
       }
    }   
 
