@@ -128,6 +128,17 @@ int run(int n){
    return 1;
 }
 
+int status(){
+   printf("The motor is calibrated: %s\n", calibrated ? "true" : "false");
+   printf("Number of steps per revolution: ");
+   if(calibrated == true){
+      printf("%d\n", numberOfSteps);   
+   }else{
+      printf("Not available\n");
+   }
+   return 1;
+}
+
 int main(){
    stdio_init_all();
 
@@ -156,13 +167,7 @@ int main(){
             arguments* args = parse_args(buffer);
             pos = 0;
             if(strcmp(args->args[0], "status") == 0){
-               printf("The motor is calibrated: %s\n", calibrated ? "true" : "false");
-               printf("Number of steps per revolution: ");
-               if(calibrated == true){
-                  printf("%d\n", numberOfSteps);   
-               }else{
-                  printf("Not available\n");
-               }
+               status();
             }
             if(strcmp(args->args[0], "calibrate") == 0){
                calibrate();
