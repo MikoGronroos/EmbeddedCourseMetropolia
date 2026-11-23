@@ -3,7 +3,7 @@
 #include "hardware/gpio.h"
 #include <time.h>
 #include <string.h>    
-#include "args.h"
+#include "hardware/uart.h"
 #include <stdlib.h>
 #include <math.h>
 
@@ -21,5 +21,31 @@ typedef enum {
    STATE_CHECK_CONNECTION = 2,
    STATE_READ_VERSION = 3,
    STATE_READ_DEVUI = 4
-} state;
+} appstate;
 
+void uart_flush(uart_inst_t *uart){
+   while(uart_is_readable(uart)){
+      (void)uart_getc(uart);
+   }
+}
+
+int main(){
+   stdio_init_all();
+
+   gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
+   gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
+
+   gpio_init(SW_0_PIN);
+   gpio_set_dir(SW_0_PIN, GPIO_IN);
+   gpio_pull_up(SW_0_PIN);   
+
+   appstate state = STATE_WAIT;
+   char rx_buffer[BUFFER_SIZE];
+
+   while(true){
+      switch(state){
+   
+      }
+   }   
+
+}
