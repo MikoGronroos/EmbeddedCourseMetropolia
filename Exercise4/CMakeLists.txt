@@ -35,7 +35,6 @@ target_link_libraries(${PROJECT_NAME}
         hardware_pwm
         hardware_gpio
         hardware_uart
-        lora_uart_lab
 )
 
 # Disable usb output, enable uart output

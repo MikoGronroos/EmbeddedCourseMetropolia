@@ -44,7 +44,20 @@ int main(){
 
    while(true){
       switch(state){
-   
+         case STATE_WAIT:
+            if(!gpio_get(SW_0_PIN)){
+               sleep_ms(22);
+               if(!gpio_get(SW_0_PIN)){
+                  while(!gpio_get(SW_0_PIN)){
+                     
+                  }
+                  state = STATE_CHECK_CONNECTION;
+               }
+            }
+            break;
+         case STATE_CHECK_CONNECTION:
+            printf("Hei\n");
+            break;
       }
    }   
 
