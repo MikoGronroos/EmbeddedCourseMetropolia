@@ -52,6 +52,7 @@ int uart_read_line_timeout(uart_inst_t *uart, char *buffer, size_t max_len, uint
 int main(){
    stdio_init_all();
 
+   uart_init(UART_ID, BAUD_RATE);
    gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
    gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
 
@@ -76,18 +77,26 @@ int main(){
             }
             break;
          case STATE_CHECK_CONNECTION:
+            printf("xd 1\n");
             bool connected = false;
 
             for (int attempt = 0; attempt < 5; attempt++) {
-               uart_flush(UART_ID);
-               uart_puts(UART_ID, "AT\r\n");
+               printf("attempt %d\n", attempt);
 
+               uart_flush(UART_ID);
+               printf("amen 1\n");
+               uart_puts(UART_ID, "AT\r\n");
+               printf("amen 2\n");
                int len = uart_read_line_timeout(UART_ID, buffer, BUFFER_SIZE, TIMEOUT);
+               printf("amen 3\n");
+
                if (len > 0 && strstr(buffer, "+AT: OK") != NULL) {
                   connected = true;
                   break;
                }
+               printf("amen 4\n");
             }
+             
             if (connected) {
                printf("Connected to LoRa module\n");
                state = STATE_READ_VERSION;
