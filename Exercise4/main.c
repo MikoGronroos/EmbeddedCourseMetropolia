@@ -5,6 +5,7 @@
 #include <string.h>    
 #include "hardware/uart.h"
 #include <stdlib.h>
+#include <ctype.h>
 #include <math.h>
 
 #define UART_ID uart1
@@ -27,6 +28,25 @@ void uart_flush(uart_inst_t *uart){
    while(uart_is_readable(uart)){
       (void)uart_getc(uart);
    }
+}
+
+bool format_deveui(const char *raw_response, char *formatted_out, size_t out_size) {
+    const char *comma = strchr(raw_response, ',');
+    if (comma == NULL) {
+        return false;
+    }
+
+    const char *p = comma + 1;
+    size_t out_idx = 0;
+
+    while (*p != '\0' && out_idx < out_size - 1) {
+        if (isxdigit((unsigned char)*p)) {
+            formatted_out[out_idx++] = (char)tolower((unsigned char)*p);
+        }
+        p++;
+    }
+    formatted_out[out_idx] = '\0';
+    return (out_idx == 16);
 }
 
 int uart_read_line_timeout(uart_inst_t *uart, char *buffer, size_t max_len, uint32_t timeout) {
@@ -62,6 +82,7 @@ int main(){
 
    appstate state = STATE_WAIT;
    char buffer[BUFFER_SIZE];
+   int len = 0;
 
    while(true){
       switch(state){
@@ -82,7 +103,7 @@ int main(){
             for (int attempt = 0; attempt < 5; attempt++) {
                uart_flush(UART_ID);
                uart_puts(UART_ID, "AT\r\n");
-               int len = uart_read_line_timeout(UART_ID, buffer, BUFFER_SIZE, TIMEOUT);
+               len = uart_read_line_timeout(UART_ID, buffer, BUFFER_SIZE, TIMEOUT);
                if (len > 0 && strstr(buffer, "+AT: OK") != NULL) {
                   connected = true;
                   break;
@@ -100,7 +121,7 @@ int main(){
          case STATE_READ_VERSION:
             uart_flush(UART_ID);
             uart_puts(UART_ID, "AT+VER\r\n");
-            int len = uart_read_line_timeout(UART_ID, buffer, BUFFER_SIZE, TIMEOUT);
+            len = uart_read_line_timeout(UART_ID, buffer, BUFFER_SIZE, TIMEOUT);
             if (len > 0 && strstr(buffer, "+VER:") != NULL) {
                buffer[strcspn(buffer, "\r\n")] = '\0';
                printf("Firmware version: %s\n", buffer);
@@ -111,8 +132,22 @@ int main(){
             }
             break;
          case STATE_READ_DEVEUI:
+            uart_flush(UART_ID);
+            uart_puts(UART_ID, "AT+ID=DevEui\r\n");
+            len = uart_read_line_timeout(UART_ID, buffer, BUFFER_SIZE, TIMEOUT);
+            if (len > 0 && strstr(buffer, "+ID: DevEui") != NULL) {
+               char clean_deveui[17];
+               if (format_deveui(buffer, clean_deveui, sizeof(clean_deveui))) {
+                  printf("%s\n", clean_deveui);
+               } else {
+                  printf("Failed to parse DevEui: %s\n", buffer);
+               }
+               state = STATE_WAIT;
+               } else {
+                  printf("Module stopped responding\n");
+                  state = STATE_WAIT;
+               }
             break;
       }
    }   
-
 }
