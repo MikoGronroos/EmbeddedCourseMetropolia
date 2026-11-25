@@ -16,6 +16,7 @@
 #define pinD 13
 
 uint numberOfSteps = 0;
+uint amountOfArgs = 0;
 bool calibrated = false;
 
 int turnRight(){
@@ -67,7 +68,7 @@ arguments* parse_args(char* input){
   if(args == NULL){
     return NULL;
   }
-  int amountOfArgs = 1;
+  amountOfArgs = 1;
   for(int i = 0; i < strlen(input); i++){
     if(input[i] == ' '){
       amountOfArgs++;
@@ -167,13 +168,23 @@ int main(){
             arguments* args = parse_args(buffer);
             pos = 0;
             if(strcmp(args->args[0], "status") == 0){
-               status();
+               if(amountOfArgs == 1){
+                  status();
+               }
             }
             if(strcmp(args->args[0], "calibrate") == 0){
-               calibrate();
+               if(amountOfArgs == 1){
+                  calibrate();
+               }
             }
             if(strcmp(args->args[0], "run") == 0){
-               run(atoi(args->args[1]));
+               if(amountOfArgs > 1){
+                  if(atoi(args->args[1]) >= 0){
+                     run(atoi(args->args[1]));
+                  }
+               }else {
+                  run(8);
+               }
             }
             free(args);
          } else {
